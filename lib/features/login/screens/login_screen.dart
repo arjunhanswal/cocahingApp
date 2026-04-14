@@ -3,6 +3,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:coaching_app/widgets/app_widgets.dart';
 import 'package:coaching_app/main.dart'; // for MainShell
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,11 +25,16 @@ class _LoginScreenState extends State<LoginScreen> {
     return md5.convert(utf8.encode(input)).toString();
   }
 
-  void _login() {
+ void _login() async {
   final user = _userCtrl.text.trim();
   final pass = _passCtrl.text.trim();
 
   if (user == "admin" && pass == "admin123") {
+    final prefs = await SharedPreferences.getInstance();
+
+    // ✅ Save login state
+    await prefs.setBool('isLoggedIn', true);
+
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => const MainShell()),

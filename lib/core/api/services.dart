@@ -96,12 +96,16 @@ class PaymentService {
     final list = data is List ? data : (data['data'] ?? data['payments'] ?? []);
     return (list as List).map((e) => Payment.fromJson(e)).toList();
   }
+Future<List<FeeSummary>> getFeesList() async {
+  final data = await _client.get(ApiConfig.fees);
 
-  Future<List<FeeSummary>> getFeesList() async {
-    final data = await _client.get(ApiConfig.fees);
-    final list = data is List ? data : (data['data'] ?? data['fees'] ?? []);
-    return (list as List).map((e) => FeeSummary.fromJson(e)).toList();
-  }
+  // ✅ PRINT ACTUAL RESPONSE
+  print("FEES API RAW: $data");
+
+  final list = data is List ? data : (data['data'] ?? data['fees'] ?? []);
+
+  return (list as List).map((e) => FeeSummary.fromJson(e)).toList();
+}
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/api/services.dart';
 import '../../../core/models/models.dart';
 import '../../../widgets/app_widgets.dart';
+import 'add_payment_screen.dart';
 
 class FeesScreen extends StatefulWidget {
   const FeesScreen({super.key});
@@ -137,7 +138,19 @@ class _FeeTile extends StatelessWidget {
     return Card(
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
-        onTap: () => _showPaymentSheet(context, fee),
+       onTap: () async {
+  final result = await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => AddPaymentScreen(fee: fee),
+    ),
+  );
+
+  if (result == true) {
+    // refresh
+    (context.findAncestorStateOfType<_FeesScreenState>())?._load();
+  }
+},
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -150,6 +163,10 @@ class _FeeTile extends StatelessWidget {
                   style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700),
                 ),
               ),
+              Text(
+        'ID: ${fee.studentId ?? "NULL"}',
+        style: const TextStyle(fontSize: 10, color: Colors.grey),
+      ),
               const SizedBox(width: 10),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(fee.studentName, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
@@ -232,6 +249,7 @@ class _PaymentSheetState extends State<_PaymentSheet> {
       showSnack(context, 'Enter a valid amount', error: true);
       return;
     }
+    print("Sending studentId: ${widget.fee.studentId}");
     setState(() => _saving = true);
     try {
       await _svc.addPayment(

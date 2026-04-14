@@ -136,19 +136,18 @@ class Payment {
   });
 
   factory Payment.fromJson(Map<String, dynamic> j) => Payment(
-    id:          j['id'] as int?,
-    studentId:   (j['student_id'] ?? 0) as int,
-    amount:      _toDouble(j['amount']),
-    nextDueDate: j['next_due_date']?.toString(),
-    date:        j['date']?.toString() ?? j['created_at']?.toString(),
-    mode:        j['mode']?.toString(),
-  );
+  id:          j['id'] as int?,
+  studentId:   (j['student_id'] ?? 0) as int,
+  amount:      _toDouble(j['amount']),
+  nextDueDate: j['next_due_date']?.toString(),
 
-  Map<String, dynamic> toJson() => {
-    'student_id':   studentId,
-    'amount':       amount,
-    if (nextDueDate != null) 'next_due_date': nextDueDate,
-  };
+  // ✅ FIXED LINE
+  date:        j['payment_date']?.toString() 
+               ?? j['date']?.toString() 
+               ?? j['created_at']?.toString(),
+
+  mode:        j['mode']?.toString(),
+);
 }
 
 // ── Fee Summary (from /api/fees) ──────────────────────────────────────────────

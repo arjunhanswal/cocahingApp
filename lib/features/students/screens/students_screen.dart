@@ -173,9 +173,9 @@ class _StudentCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            _FeeText('Paid: ₹${student.paid.toStringAsFixed(0)}', AppColors.success),
+            //_FeeText('Paid: ₹${student.paid.toStringAsFixed(0)}', AppColors.success),
             _FeeText('Due: ₹${student.pending.toStringAsFixed(0)}', AppColors.danger),
-            _FeeText('Total: ₹${student.totalFee.toStringAsFixed(0)}', AppColors.textMuted),
+           // _FeeText('Total: ₹${student.totalFee.toStringAsFixed(0)}', AppColors.textMuted),
           ]),
           if (student.nextDueDate != null && student.nextDueDate!.isNotEmpty) ...[
             const SizedBox(height: 4),

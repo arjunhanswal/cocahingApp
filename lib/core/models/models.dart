@@ -2,87 +2,92 @@
 // lib/core/models/models.dart  — all models matching the Postman API schema
 // ─────────────────────────────────────────────────────────────────────────────
 
-// ── Student ───────────────────────────────────────────────────────────────────
-class Student {
-  final int? id;
-  final String name;
-  final String fatherName;
-  final String mobile;
-  final String email;
-  final String dob;
-  final String gender;
-  final String admissionDate;
-  final String classTime;
-  final int? courseId;
-  final double totalFee;
-  final double paidNow;
-  final String? nextDueDate;
-  // Computed from API
-  final double? paidAmount;
-  final double? pendingAmount;
-  final String? courseName;
+// // ── Student ───────────────────────────────────────────────────────────────────
+// class Student {
+//   final int? id;
+//   final String name;
+//   final String fatherName;
+//   final String mobile;
+//   final String email;
+//   final String dob;
+//   final String gender;
+//   final String admissionDate;
+//   final String classTime;
+//   final int? courseId;
+//   final double totalFee;
+//   final double paidNow;
+//   final String? nextDueDate;
+//   // Computed from API
+//   final double? paidAmount;
+//   final double? pendingAmount;
+//   final String? courseName;
 
-  Student({
-    this.id,
-    required this.name,
-    required this.fatherName,
-    required this.mobile,
-    required this.email,
-    required this.dob,
-    required this.gender,
-    required this.admissionDate,
-    required this.classTime,
-    this.courseId,
-    required this.totalFee,
-    required this.paidNow,
-    this.nextDueDate,
-    this.paidAmount,
-    this.pendingAmount,
-    this.courseName,
-  });
+//   Student({
+//     this.id,
+//     required this.name,
+//     required this.fatherName,
+//     required this.mobile,
+//     required this.email,
+//     required this.dob,
+//     required this.gender,
+//     required this.admissionDate,
+//     required this.classTime,
+//     this.courseId,
+//     required this.totalFee,
+//     required this.paidNow,
+//     this.nextDueDate,
+//     this.paidAmount,
+//     this.pendingAmount,
+//     this.courseName,
+//   });
 
-  double get paid => paidAmount ?? paidNow;
-  double get pending => pendingAmount ?? (totalFee - paidNow);
-  String get feeStatus {
-    if (paid >= totalFee) return 'Paid';
-    if (paid > 0) return 'Partial';
-    return 'Pending';
-  }
+//   double get paid => paidAmount ?? paidNow;
+//   double get pending => pendingAmount ?? (totalFee - paidNow);
+//   String get feeStatus {
+//     if (paid >= totalFee) return 'Paid';
+//     if (paid > 0) return 'Partial';
+//     return 'Pending';
+//   }
 
-  factory Student.fromJson(Map<String, dynamic> j) => Student(
-    id:            j['id'] as int?,
-    name:          j['name'] ?? '',
-    fatherName:    j['father_name'] ?? '',
-    mobile:        j['mobile'] ?? '',
-    email:         j['email'] ?? '',
-    dob:           j['dob'] ?? '',
-    gender:        j['gender'] ?? '',
-    admissionDate: j['admission_date'] ?? '',
-    classTime:     j['class_time'] ?? '',
-    courseId:      j['course_id'] as int?,
-    totalFee:      _toDouble(j['total_fee']),
-    paidNow:       _toDouble(j['paid_now']),
-    nextDueDate:   j['next_due_date']?.toString(),
-    paidAmount:    j['paid_amount'] != null ? _toDouble(j['paid_amount']) : null,
-    pendingAmount: j['pending_amount'] != null ? _toDouble(j['pending_amount']) : null,
-    courseName:    j['course_name']?.toString(),
-  );
+//   factory Student.fromJson(Map<String, dynamic> j) => Student(
+//   id:            j['id'] as int?,
+//   name:          j['name'] ?? '',
+//   fatherName:    j['father_name'] ?? '',
+//   mobile:        j['mobile'] ?? '',
+//   email:         j['email'] ?? '',
+//   dob:           j['dob'] ?? '',
+//   gender:        j['gender'] ?? '',
+//   admissionDate: j['admission_date'] ?? '',
+//   classTime:     j['class_time'] ?? '',
+//   courseId:      j['course_id'] as int?,
+//   totalFee:      _toDouble(j['total_fee']),
 
-  Map<String, dynamic> toJson() => {
-    'name':           name,
-    'father_name':    fatherName,
-    'mobile':         mobile,
-    'email':          email,
-    'dob':            dob,
-    'gender':         gender,
-    'admission_date': admissionDate,
-    'class_time':     classTime,
-    if (courseId != null) 'course_id': courseId,
-    'total_fee':      totalFee,
-    'paid_now':       paidNow,
-    if (nextDueDate != null) 'next_due_date': nextDueDate,
-  };
-}
+//   // ✅ FIX HERE
+//   paidNow:       _toDouble(j['paid_now'] ?? j['paid_amount']),
+
+//   nextDueDate:   j['next_due_date']?.toString(),
+
+//   paidAmount:    j['paid_amount'] != null ? _toDouble(j['paid_amount']) : null,
+//   pendingAmount: j['pending_amount'] != null ? _toDouble(j['pending_amount']) : null,
+
+//   courseName:    j['course']?.toString() ?? j['course_name']?.toString(),
+// );
+
+//   Map<String, dynamic> toJson() => {
+//     'name':           name,
+//     'father_name':    fatherName,
+//     'mobile':         mobile,
+//     'email':          email,
+//     'dob':            dob,
+//     'gender':         gender,
+//     'admission_date': admissionDate,
+//     'class_time':     classTime,
+//     if (courseId != null) 'course_id': courseId,
+//     'total_fee':      totalFee,
+//     'paid_now':       paidNow,
+//     if (nextDueDate != null) 'next_due_date': nextDueDate,
+//   };
+// }
 
 // ── Course ────────────────────────────────────────────────────────────────────
 class Course {
@@ -251,4 +256,107 @@ double _toDouble(dynamic v) {
   if (v is double) return v;
   if (v is int) return v.toDouble();
   return double.tryParse(v.toString()) ?? 0.0;
+}
+class Student {
+  final int? id;
+  final String name;
+  final String fatherName;
+  final String mobile;
+  final String email;
+  final String dob;
+  final String gender;
+  final String admissionDate;
+  final String classTime;
+  final int? courseId;
+  final double totalFee;
+  final double paidNow;
+  final String? nextDueDate;
+
+  // API computed values
+  final double? paidAmount;
+  final double? pendingAmount;
+  final String? courseName;
+
+  Student({
+    this.id,
+    required this.name,
+    required this.fatherName,
+    required this.mobile,
+    required this.email,
+    required this.dob,
+    required this.gender,
+    required this.admissionDate,
+    required this.classTime,
+    this.courseId,
+    required this.totalFee,
+    required this.paidNow,
+    this.nextDueDate,
+    this.paidAmount,
+    this.pendingAmount,
+    this.courseName,
+  });
+
+  // ✅ Correct calculation
+  double get paid => paidAmount ?? paidNow;
+  double get pending => pendingAmount ?? (totalFee - paidNow);
+
+  String get feeStatus {
+    if (paid >= totalFee) return 'Paid';
+    if (paid > 0) return 'Partial';
+    return 'Pending';
+  }
+
+  // ✅ Clean Date Format
+  static String _formatDate(String? date) {
+    if (date == null || date.isEmpty) return '';
+    return date.split('T').first; // convert ISO → YYYY-MM-DD
+  }
+
+  factory Student.fromJson(Map<String, dynamic> j) => Student(
+        id: j['id'] as int?,
+        name: j['name'] ?? '',
+        fatherName: j['father_name'] ?? '',
+        mobile: j['mobile'] ?? '',
+        email: j['email'] ?? '',
+
+        // ✅ formatted dates
+        dob: _formatDate(j['dob']),
+        admissionDate: _formatDate(j['admission_date']),
+
+        gender: j['gender'] ?? '',
+        classTime: j['class_time'] ?? '',
+        courseId: j['course_id'] as int?,
+        totalFee: _toDouble(j['total_fee']),
+
+        // ✅ FIXED mapping
+        paidNow: _toDouble(j['paid_now'] ?? j['paid_amount']),
+
+        nextDueDate: _formatDate(j['next_due_date']),
+
+        paidAmount:
+            j['paid_amount'] != null ? _toDouble(j['paid_amount']) : null,
+
+        pendingAmount:
+            j['pending_amount'] != null ? _toDouble(j['pending_amount']) : null,
+
+        // ✅ supports both API formats
+        courseName: j['course']?.toString() ??
+            j['course_name']?.toString(),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'father_name': fatherName,
+        'mobile': mobile,
+        'email': email,
+        'dob': dob,
+        'gender': gender,
+        'admission_date': admissionDate,
+        'class_time': classTime,
+        if (courseId != null) 'course_id': courseId,
+        'total_fee': totalFee,
+        'paid_now': paidNow,
+        if (nextDueDate != null && nextDueDate!.isNotEmpty)
+          'next_due_date': nextDueDate,
+      };
 }

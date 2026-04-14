@@ -4,22 +4,44 @@ import 'package:flutter/material.dart';
 // App Colors
 // ─────────────────────────────────────────────────────────────────────────────
 class AppColors {
-  static const primary   = Color(0xFF1A237E); // Deep indigo
-  static const accent    = Color(0xFF00BCD4); // Cyan
-  static const success   = Color(0xFF2E7D32);
-  static const warning   = Color(0xFFF57F17);
-  static const danger    = Color(0xFFC62828);
-  static const bg        = Color(0xFFF4F6FB);
+  // 🌈 Primary Palette (Modern Indigo-Blue)
+  static const primary   = Color(0xFF4F46E5); // Indigo (softer than dark blue)
+  static const secondary = Color(0xFF6366F1); // Light Indigo
+  static const accent    = Color(0xFF06B6D4); // Cyan (fresh)
+
+  // ✅ Status Colors (more vibrant & modern)
+  static const success   = Color(0xFF22C55E); // Green
+  static const warning   = Color(0xFFF59E0B); // Amber
+  static const danger    = Color(0xFFEF4444); // Red
+
+  // 🎨 Backgrounds
+  static const bg        = Color(0xFFF8FAFC); // Softer background
   static const card      = Colors.white;
-  static const textDark  = Color(0xFF1C1C2E);
-  static const textMuted = Color(0xFF7B8190);
-  static const border    = Color(0xFFE3E8F0);
+
+  // 📝 Text Colors
+  static const textDark  = Color(0xFF0F172A); // Rich dark (better than grey)
+  static const textMuted = Color(0xFF64748B); // Modern grey
+
+  // 📦 Borders
+  static const border    = Color(0xFFE2E8F0);
+
+  // 🎯 Gradient Options (for dashboard cards)
+  static const gradients = [
+    [Color(0xFF6366F1), Color(0xFF8B5CF6)], // Indigo → Purple
+    [Color(0xFF06B6D4), Color(0xFF3B82F6)], // Cyan → Blue
+    [Color(0xFF22C55E), Color(0xFF4ADE80)], // Green
+    [Color(0xFFF59E0B), Color(0xFFFBBF24)], // Amber
+    [Color(0xFFEF4444), Color(0xFFF87171)], // Red
+  ];
 
   static Color statusColor(String s) {
     switch (s) {
-      case 'Paid':    return success;
-      case 'Partial': return warning;
-      default:        return danger;
+      case 'Paid':
+        return success;
+      case 'Partial':
+        return warning;
+      default:
+        return danger;
     }
   }
 }

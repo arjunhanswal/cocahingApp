@@ -5,6 +5,7 @@ import 'features/students/screens/students_screen.dart';
 import 'features/courses/screens/courses_screen.dart';
 import 'features/payments/screens/fees_screen.dart';
 import 'features/staff/screens/staff_screen.dart';
+import 'features/login/screens/login_screen.dart';
 
 void main() => runApp(const CoachingApp());
 
@@ -17,7 +18,7 @@ class CoachingApp extends StatelessWidget {
       title: 'Coaching Manager',
       debugShowCheckedModeBanner: false,
       theme: appTheme,
-      home: const MainShell(),
+     home: const LoginScreen(),
     );
   }
 }

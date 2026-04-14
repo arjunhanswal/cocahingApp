@@ -231,7 +231,7 @@ class DashboardSummary {
   factory DashboardSummary.fromJson(Map<String, dynamic> j) => DashboardSummary(
     totalStudents: (j['total_students'] ?? j['students'] ?? 0) as int,
     totalCourses:  (j['total_courses']  ?? j['courses']  ?? 0) as int,
-    totalRevenue:  _toDouble(j['total_revenue'] ?? j['revenue'] ?? 0),
+    totalRevenue:  _toDouble(j['totalRevenue'] ?? j['revenue'] ?? 0),
     totalPending:  _toDouble(j['total_pending'] ?? j['pending'] ?? 0),
     totalStaff:    (j['total_staff']    ?? j['staff']    ?? 0) as int,
   );
@@ -245,7 +245,7 @@ class MonthlyRevenue {
 
   factory MonthlyRevenue.fromJson(Map<String, dynamic> j) => MonthlyRevenue(
     month:  j['month']?.toString() ?? '',
-    amount: _toDouble(j['amount'] ?? j['revenue'] ?? 0),
+    amount: _toDouble(j['total'] ?? j['revenue'] ?? 0),
   );
 }
 

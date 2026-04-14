@@ -19,6 +19,12 @@ class CoachingApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: appTheme,
      home: const LoginScreen(),
+     routes: {
+        '/home': (context) => const MainShell(),
+        '/add-student': (context) => const StudentsScreen(),
+        '/add-payment': (context) => const FeesScreen(),
+        '/courses': (context) => const CoursesScreen(),
+      },
     );
   }
 }

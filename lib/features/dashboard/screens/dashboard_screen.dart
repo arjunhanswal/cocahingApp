@@ -209,7 +209,7 @@ class _QuickActions extends StatelessWidget {
           const SizedBox(width: 10),
           _ActionButton(Icons.payment, "Add Payment"),
           const SizedBox(width: 10),
-          _ActionButton(Icons.receipt, "Reports"),
+          _ActionButton(Icons.receipt, "Courses"),
         ],
       ),
     );
@@ -222,21 +222,35 @@ class _ActionButton extends StatelessWidget {
 
   const _ActionButton(this.icon, this.label);
 
+  void _handleTap(BuildContext context) {
+    if (label == "Add Student") {
+      Navigator.pushNamed(context, "/add-student");
+    } else if (label == "Add Payment") {
+      Navigator.pushNamed(context, "/add-payment");
+    } else if (label == "Courses") {
+      Navigator.pushNamed(context, "/courses");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: Colors.blue),
-            const SizedBox(height: 6),
-            Text(label, style: const TextStyle(fontSize: 12)),
-          ],
+      child: InkWell(
+        onTap: () => _handleTap(context),
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: Colors.blue),
+              const SizedBox(height: 6),
+              Text(label, style: const TextStyle(fontSize: 12)),
+            ],
+          ),
         ),
       ),
     );
@@ -249,10 +263,29 @@ class _RevenueChart extends StatelessWidget {
   final List<MonthlyRevenue> data;
   const _RevenueChart({required this.data});
 
+  String _getMonthName(dynamic month) {
+    // handle both int and string
+    int m = 1;
+
+    if (month is int) {
+      m = month;
+    } else {
+      m = int.tryParse(month.toString()) ?? 1;
+    }
+
+    const months = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+
+    return (m >= 1 && m <= 12) ? months[m - 1] : "NA";
+  }
+
   @override
   Widget build(BuildContext context) {
-    final maxValue =
-        data.isEmpty ? 1 : data.map((e) => e.amount).reduce(max);
+    final maxValue = data.isEmpty
+        ? 1.0
+        : data.map((e) => e.amount).reduce((a, b) => a > b ? a : b);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -261,39 +294,60 @@ class _RevenueChart extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 10,
+              color: Colors.black.withOpacity(0.05),
+            )
+          ],
         ),
-        child: SizedBox(
-          height: 140,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: data.map((e) {
-            final maxValue = data.isEmpty
-    ? 1.0
-    : data.map((e) => e.amount).reduce((a, b) => a > b ? a : b);
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Revenue",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 12),
 
-final h = maxValue == 0 ? 0.0 : (e.amount / maxValue) * 100;
-              return Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      height: h,
-                      width: 10,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
+            SizedBox(
+              height: 140,
+              child: data.isEmpty
+                  ? const Center(child: Text("No Data"))
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: data.map((e) {
+                        final h = maxValue == 0
+                            ? 0.0
+                            : (e.amount / maxValue) * 100;
+
+                        return Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Container(
+                                height: h,
+                                width: 12,
+                                decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                _getMonthName(e.month),
+                                style: const TextStyle(fontSize: 10),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
                     ),
-                    const SizedBox(height: 6),
-                   Text(
-  e.month.length >= 3 ? e.month.substring(0, 3) : e.month,
-  style: const TextStyle(fontSize: 10),
-)
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -137,22 +137,39 @@ class _StatsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GridView.count(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        crossAxisCount: 2,
-        childAspectRatio: 1.3,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        children: [
-          _StatCard("Students", "${summary.totalStudents}", Icons.school, Colors.blue),
-          _StatCard("Courses", "${summary.totalCourses}", Icons.book, Colors.purple),
-          _StatCard("Revenue", "₹${summary.totalRevenue.toStringAsFixed(0)}", Icons.trending_up, Colors.green),
-          _StatCard("Pending", "₹${summary.totalPending.toStringAsFixed(0)}", Icons.warning, Colors.red),
-        ],
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        int crossAxisCount = 2;
+
+        if (constraints.maxWidth > 1200) {
+          crossAxisCount = 5; // 💻 large web
+        } else if (constraints.maxWidth > 900) {
+          crossAxisCount = 4;
+        } else if (constraints.maxWidth > 600) {
+          crossAxisCount = 3;
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: crossAxisCount,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+
+            // 🔥 IMPORTANT: control height
+            childAspectRatio: 1.6, // 👈 increase = smaller height
+
+            children: [
+              _StatCard("Students", "${summary.totalStudents}", Icons.school, Colors.blue),
+              _StatCard("Courses", "${summary.totalCourses}", Icons.book, Colors.purple),
+              _StatCard("Revenue", "₹${summary.totalRevenue.toStringAsFixed(0)}", Icons.trending_up, Colors.green),
+              _StatCard("Pending", "₹${summary.totalPending.toStringAsFixed(0)}", Icons.warning, Colors.red),
+            ],
+          ),
+        );
+      },
     );
   }
 }

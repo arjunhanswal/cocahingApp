@@ -1,11 +1,11 @@
 {
-    "name": "coaching_flutter_clean",
-    "short_name": "coaching_flutter_clean",
+    "name": "Ruchi Makeup Zone",
+    "short_name": "Ruchi Makeup Zone",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Ruchi Makeup Zone",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -152,36 +152,79 @@ class Payment {
 
 // ── Fee Summary (from /api/fees) ──────────────────────────────────────────────
 class FeeSummary {
-  final int? studentId;
-  final String studentName;
+  final int id;
+  final int studentId;
+  final String name;
+  final String fatherName;
+  final String mobile;
+  final String? alternateMobile;
+  final String email;
+  final String dob;
+  final String gender;
+  final String admissionDate;
+
   final double totalFee;
   final double paidAmount;
   final double pendingAmount;
+  final double discount;
+
+  final String status;
   final String? nextDueDate;
 
+  final List<Course> courses;
+
   FeeSummary({
-    this.studentId,
-    required this.studentName,
+    required this.id,
+    required this.studentId,
+    required this.name,
+    required this.fatherName,
+    required this.mobile,
+    this.alternateMobile,
+    required this.email,
+    required this.dob,
+    required this.gender,
+    required this.admissionDate,
     required this.totalFee,
     required this.paidAmount,
     required this.pendingAmount,
+    required this.discount,
+    required this.status,
     this.nextDueDate,
+    required this.courses,
   });
 
-  String get status {
-    if (paidAmount >= totalFee) return 'Paid';
-    if (paidAmount > 0) return 'Partial';
-    return 'Pending';
+  factory FeeSummary.fromJson(Map<String, dynamic> j) {
+    return FeeSummary(
+      id: j['id'],
+      studentId: j['student_id'],
+      name: j['name'] ?? '',
+      fatherName: j['father_name'] ?? '',
+      mobile: j['mobile'] ?? '',
+      alternateMobile: j['alternate_mobile'],
+      email: j['email'] ?? '',
+      dob: j['dob'] ?? '',
+      gender: j['gender'] ?? '',
+      admissionDate: j['admission_date'] ?? '',
+
+      totalFee: _toDouble(j['total_fee']),
+      paidAmount: _toDouble(j['paid_amount']),
+      pendingAmount: _toDouble(j['pending_amount']),
+      discount: _toDouble(j['discount']),
+
+      status: j['status'] ?? '',
+
+      nextDueDate: j['next_due_date'],
+
+      courses: (j['courses'] as List<dynamic>? ?? [])
+          .map((e) => Course.fromJson(e))
+          .toList(),
+    );
   }
 
-  factory FeeSummary.fromJson(Map<String, dynamic> j) => FeeSummary(
-    studentId:     j['student_id'] as int?,
-    studentName:   j['student_name'] ?? j['name'] ?? '',
-    totalFee:      _toDouble(j['total_fee']),
-    paidAmount:    _toDouble(j['paid_amount']),
-    pendingAmount: _toDouble(j['pending_amount']),
-    nextDueDate:   j['next_due_date']?.toString(),
-  );
+  static double _toDouble(dynamic v) {
+    if (v == null) return 0.0;
+    return double.tryParse(v.toString()) ?? 0.0;
+  }
 }
 
 // ── Staff ─────────────────────────────────────────────────────────────────────

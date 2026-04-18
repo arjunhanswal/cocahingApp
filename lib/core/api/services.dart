@@ -80,11 +80,13 @@ class PaymentService {
     required int studentId,
     required double amount,
     String? nextDueDate,
+    required double discount,
   }) async {
     final body = {
       'student_id': studentId,
       'amount': amount,
       if (nextDueDate != null) 'next_due_date': nextDueDate,
+      "discount": discount,
     };
     final data = await _client.post(ApiConfig.payments, body);
     final json = data is Map && data.containsKey('data') ? data['data'] : data;

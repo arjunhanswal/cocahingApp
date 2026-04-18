@@ -112,7 +112,7 @@ class _Header extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: const [
           Text(
-            "AK Coaching Manager",
+            "Ruchi Makeup Zone",
             style: TextStyle(
               color: Colors.white,
               fontSize: 22,

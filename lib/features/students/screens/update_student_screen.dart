@@ -10,14 +10,17 @@ class SelectedCourse {
   SelectedCourse({this.courseId, this.timeSlot});
 }
 
-class AddStudentNewScreen extends StatefulWidget {
-  const AddStudentNewScreen({super.key});
+class UpdateStudentScreen extends StatefulWidget {
+  final Student student;
+
+  const UpdateStudentScreen({super.key, required this.student});
 
   @override
-  State<AddStudentNewScreen> createState() => _AddStudentNewScreenState();
+  State<UpdateStudentScreen> createState() =>
+      _UpdateStudentScreenState();
 }
 
-class _AddStudentNewScreenState extends State<AddStudentNewScreen> {
+class _UpdateStudentScreenState extends State<UpdateStudentScreen> {
   final _form = GlobalKey<FormState>();
 
   final _name = TextEditingController();
@@ -34,7 +37,7 @@ class _AddStudentNewScreenState extends State<AddStudentNewScreen> {
   String _gender = 'male';
 
   List<Course> _courses = [];
-  List<SelectedCourse> _selectedCourses = [SelectedCourse()];
+  List<SelectedCourse> _selectedCourses = [];
 
   final _studentSvc = StudentService();
   final _courseSvc = CourseService();
@@ -52,6 +55,25 @@ class _AddStudentNewScreenState extends State<AddStudentNewScreen> {
   void initState() {
     super.initState();
     _loadCourses();
+    _prefill();
+  }
+
+  void _prefill() {
+    final s = widget.student;
+
+    _name.text = s.name;
+    _father.text = s.fatherName;
+    _mobile.text = s.mobile;
+    _email.text = s.email;
+    _dob.text = s.dob;
+    _admDate.text = s.admissionDate;
+    _totalFee.text = s.totalFee.toStringAsFixed(0);
+    _paidNow.text = s.paid.toStringAsFixed(0);
+    _dueDate.text = s.nextDueDate ?? '';
+    _gender = s.gender;
+
+    // ⚠️ Courses prefill depends on API response
+    // If courses not coming → keep empty
   }
 
   Future<void> _loadCourses() async {
@@ -80,22 +102,8 @@ class _AddStudentNewScreenState extends State<AddStudentNewScreen> {
       "end": "${parts[1].trim()}:00",
     };
   }
-void _updateTotalFee() {
-  double total = 0;
 
-  for (var item in _selectedCourses) {
-    if (item.courseId != null) {
-      final course = _courses.firstWhere(
-        (c) => c.id == item.courseId,
-        orElse: () => Course(id: 0, name: '', totalFee: 0, duration: ""),
-      );
-      total += course.totalFee;
-    }
-  }
-
-  _totalFee.text = total.toStringAsFixed(0);
-}
-  Future<void> _save() async {
+  Future<void> _update() async {
     if (!_form.currentState!.validate()) return;
 
     setState(() => _saving = true);
@@ -128,10 +136,10 @@ void _updateTotalFee() {
     };
 
     try {
-      await _studentSvc.create(body);
+      await _studentSvc.update(widget.student.id!, body);
 
       if (mounted) {
-        showSnack(context, "Student Added");
+        showSnack(context, "Student Updated");
         Navigator.pop(context, true);
       }
     } catch (e) {
@@ -159,7 +167,7 @@ void _updateTotalFee() {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Add Student")),
+      appBar: AppBar(title: const Text("Update Student")),
       body: Form(
         key: _form,
         child: ListView(
@@ -167,113 +175,53 @@ void _updateTotalFee() {
           children: [
             const SectionHeader("PERSONAL INFO"),
 
-            AppField(
-              controller: _name,
-              label: "Full Name *",
-              icon: Icons.person,
-              validator: (v) => v!.isEmpty ? "Required" : null,
-            ),
+            AppField(controller: _name, label: "Name"),
             const SizedBox(height: 10),
 
-            AppField(
-              controller: _father,
-              label: "Father Name",
-              icon: Icons.family_restroom,
-            ),
+            AppField(controller: _father, label: "Father Name"),
             const SizedBox(height: 10),
 
-            AppField(
-              controller: _mobile,
-              label: "Mobile *",
-              icon: Icons.phone,
-              keyboardType: TextInputType.phone,
-              validator: (v) =>
-                  v!.length != 10 ? "Enter valid mobile" : null,
-            ),
+            AppField(controller: _mobile, label: "Mobile"),
             const SizedBox(height: 10),
 
-            AppField(
-              controller: _altMobile,
-              label: "Alternate Mobile",
-              icon: Icons.phone_android,
-            ),
+            AppField(controller: _altMobile, label: "Alternate Mobile"),
             const SizedBox(height: 10),
 
-            AppField(
-              controller: _email,
-              label: "Email",
-              icon: Icons.email,
-            ),
+            AppField(controller: _email, label: "Email"),
             const SizedBox(height: 10),
-GestureDetector(
-  onTap: () => _pickDate(_admDate),
-  child: AbsorbPointer(
-    child: AppField(
-      controller: _admDate,
-      label: "Admission Date *",
-      icon: Icons.calendar_today,
-      validator: (v) => v!.isEmpty ? "Required" : null,
-    ),
-  ),
-),
-  const SizedBox(height: 10),
+
             GestureDetector(
               onTap: () => _pickDate(_dob),
               child: AbsorbPointer(
-                child: AppField(
-                  controller: _dob,
-                  label: "DOB",
-                  icon: Icons.cake,
-                ),
+                child: AppField(controller: _dob, label: "DOB"),
               ),
-            ),
-const SizedBox(height: 10),
-            DropdownButtonFormField(
-              value: _gender,
-              items: ['male', 'female', 'other']
-                  .map((g) => DropdownMenuItem(
-                        value: g,
-                        child: Text(g.toUpperCase()),
-                      ))
-                  .toList(),
-              onChanged: (v) => setState(() => _gender = v!),
-              decoration: const InputDecoration(labelText: "Gender"),
             ),
 
             const SizedBox(height: 20),
             const SectionHeader("COURSES"),
 
-            ..._selectedCourses.asMap().entries.map((entry) {
-              final item = entry.value;
-
+            ..._selectedCourses.map((item) {
               return Column(
                 children: [
-                DropdownButtonFormField<int?>(
-  value: item.courseId,
-  hint: const Text("Select Course"),
-  items: _courses.map((c) {
-    return DropdownMenuItem(
-      value: c.id,
-      child: Text("${c.name} (₹${c.totalFee})"),
-    );
-  }).toList(),
-  onChanged: (v) {
-    setState(() {
-      item.courseId = v;
-      _updateTotalFee(); // ✅ AUTO UPDATE
-    });
-  },
-),
-  const SizedBox(height: 10),
+                  DropdownButtonFormField<int?>(
+                    value: item.courseId,
+                    items: _courses.map((c) {
+                      return DropdownMenuItem(
+                        value: c.id,
+                        child: Text(c.name),
+                      );
+                    }).toList(),
+                    onChanged: (v) =>
+                        setState(() => item.courseId = v),
+                  ),
+
                   Wrap(
-                    spacing: 6,
                     children: _timeSlots.map((slot) {
                       return ChoiceChip(
                         label: Text(slot),
                         selected: item.timeSlot == slot,
-                        onSelected: (_) {
-                          setState(() => item.timeSlot = slot);
-                        },
+                        onSelected: (_) =>
+                            setState(() => item.timeSlot = slot),
                       );
                     }).toList(),
                   ),
@@ -294,40 +242,29 @@ const SizedBox(height: 10),
 
             const SectionHeader("FEES"),
 
-            AppField(
-              controller: _totalFee,
-              label: "Total Fee",
-              icon: Icons.currency_rupee,
-              keyboardType: TextInputType.number,
-            ),
+            AppField(controller: _totalFee, label: "Total Fee"),
             const SizedBox(height: 10),
 
-            AppField(
-              controller: _paidNow,
-              label: "Paid Now",
-              icon: Icons.payments,
-              keyboardType: TextInputType.number,
-            ),
+            AppField(controller: _paidNow, label: "Paid Now"),
             const SizedBox(height: 10),
 
             GestureDetector(
               onTap: () => _pickDate(_dueDate),
               child: AbsorbPointer(
                 child: AppField(
-                  controller: _dueDate,
-                  label: "Next Due Date",
-                  icon: Icons.calendar_today,
-                ),
+                    controller: _dueDate,
+                    label: "Next Due Date"),
               ),
             ),
 
             const SizedBox(height: 20),
 
             ElevatedButton(
-              onPressed: _saving ? null : _save,
+              onPressed: _saving ? null : _update,
               child: _saving
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text("Save Student"),
+                  ? const CircularProgressIndicator(
+                      color: Colors.white)
+                  : const Text("Update Student"),
             )
           ],
         ),

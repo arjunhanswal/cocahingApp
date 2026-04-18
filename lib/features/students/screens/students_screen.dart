@@ -3,6 +3,7 @@ import '../../../core/api/services.dart';
 import '../../../core/models/models.dart';
 import '../../../widgets/app_widgets.dart';
 import 'student_form_screen.dart';
+import 'update_student_screen.dart';
 
 class StudentsScreen extends StatefulWidget {
   const StudentsScreen({super.key});
@@ -52,16 +53,23 @@ class _StudentsScreenState extends State<StudentsScreen> {
     } catch (e) { showSnack(context, e.toString(), error: true); }
   }
 
-  Future<void> _openForm([Student? student]) async {
-    final result = await Navigator.push<bool>(context,
-      MaterialPageRoute(builder: (_) => StudentFormScreen(existing: student)));
-    if (result == true) _load();
-  }
+ Future<void> _openForm([Student? student]) async {
+  final result = await Navigator.push<bool>(
+    context,
+    MaterialPageRoute(
+      builder: (_) => student == null
+          ? const AddStudentNewScreen()
+          : UpdateStudentScreen(student: student),
+    ),
+  );
+
+  if (result == true) _load();
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('🎓 Students')),
+      appBar: AppBar(title: const Text('Students')),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _openForm,
         icon: const Icon(Icons.add),
